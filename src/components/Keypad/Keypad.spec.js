@@ -4,6 +4,9 @@ import Keypad from './Keypad';
 import Key from '../Key/Key';
 
 describe('Keypad', () => {
+
+  it('should render correctly', () => expect(wrapper).toMatchSnapshot());
+
   let wrapper;
 
   beforeEach(() => {

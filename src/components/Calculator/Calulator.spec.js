@@ -24,7 +24,7 @@ describe('Calculator', () => {
           callOperator={wrapper.instance().callOperator}
           numbers={wrapper.instance().state.numbers}
           operators={wrapper.instance().state.operators}
-          setOperator={wrapper.instance().setOperator}
+          selectedOperator={wrapper.instance().selectedOperator}
           updateDisplay={wrapper.instance().updateDisplay}
         />
       </div>
@@ -45,7 +45,7 @@ describe('mounted Calculator', () => {
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
-  it('calls setOperator when a operator key is clicked', () => {
+  it('calls selectedOperator when a operator key is clicked', () => {
     const spy = jest.spyOn(wrapper.instance(), 'setOperator');
     wrapper.instance().forceUpdate();
     expect(spy).toHaveBeenCalledTimes(0);
@@ -143,4 +143,75 @@ describe('setOperator', () => {
     wrapper.instance().setOperator('-');
     expect(wrapper.state('storedValue')).toEqual('5');
   });
+});
+
+describe('callOperator', () => {
+  let wrapper;
+
+  beforeEach(() => wrapper = shallow(<Calculator />));
+
+  it('updates displayValue to the sum of the storedValue and displayValue', () => {
+    wrapper.setState({ storedValue: '3' });
+    wrapper.setState({ selectedOperator: '+' });
+    wrapper.setState({ displayValue: '2' });
+    wrapper.instance().callOperator();
+    expect(wrapper.state('displayValue')).toEqual('5');
+  });
+
+  it('updates the displayValue to the difference of the storedValue and displayValue', () => {
+    wrapper.setState({ storedValue: '6' });
+    wrapper.setState({ displayValue: '4' });
+    wrapper.setState({ selectedOperator: '-' });
+    wrapper.instance().callOperator();
+    expect(wrapper.state('displayValue')).toEqual('2');
+  });
+
+  it('updates the displayValue to the product of the storedValue and displayValue', () => {
+    wrapper.setState({ storedValue: '3' });
+    wrapper.setState({ displayValue: '4' });
+    wrapper.setState({ selectedOperator: 'x' });
+    wrapper.instance().callOperator();
+    expect(wrapper.state('displayValue')).toEqual('12');
+  });
+
+  it('updates the displayValue to the quotient of the storedValue and displayValue', () => {
+    wrapper.setState({ storedValue: '3' });
+    wrapper.setState({ selectedOperator: '/' });
+    wrapper.setState({ displayValue: '2' });
+    wrapper.instance().callOperator();
+    expect(wrapper.state('displayValue')).toEqual('1.5');
+  });
+
+  it('updates the displayValue to "0" if the operation is "NaN"', () => {
+    wrapper.setState({ storedValue: '3' });
+    wrapper.setState({ displayValue: 'string' });
+    wrapper.setState({ selectedOperator: '/' });
+    wrapper.instance().callOperator();
+    expect(wrapper.state('displayValue')).toEqual('0');
+  });
+
+  it('updates the displayValue to "0" if the operation is "Infinity"', () => {
+    wrapper.setState({ storedValue: '7' });
+    wrapper.setState({ displayValue: '0' });
+    wrapper.setState({ selectedOperator: '/' });
+    wrapper.instance().callOperator();
+    expect(wrapper.state('displayValue')).toEqual('0');
+  });
+
+  it('updates the displayValue to "0" if the selectedOperator does not match cases', () => {
+    wrapper.setState({ storedValue: '7' });
+    wrapper.setState({ displayValue: '10' });
+    wrapper.setState({ selectedOperator: 'string' });
+    wrapper.instance().callOperator();
+    expect(wrapper.state('displayValue')).toEqual('0');
+  });
+
+  it('updates the displayValue to "0" if called with no value for storedValue or selectedOperator', () => {
+    wrapper.setState({ storedValue: '' });
+    wrapper.setState({ displayValue: '7' });
+    wrapper.setState({ selectedOperator: '' });
+    wrapper.instance().callOperator();
+    expect(wrapper.state('displayValue')).toEqual('0');
+  });
+
 });

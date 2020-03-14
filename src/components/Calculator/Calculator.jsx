@@ -8,7 +8,7 @@ class Calculator extends Component {
     // value to be displayed in <Display />
     displayValue: '0',
     // values to be displayed in number <Keys />
-    numbers: ['9', '8', '7', '6', '5', '4', '3', '2', '1', '0', 'ce'],
+    numbers: ['9', '8', '7', '6', '5', '4', '3', '2', '1', '.', '0', 'ce'],
     // values to be displayed in operator <Keys />
     operators: ['/', 'x', '-', '+'],
     // operator selected for math operation
@@ -18,7 +18,42 @@ class Calculator extends Component {
   }
 
   callOperator = () => {
-    console.log('call operation');
+    let {displayValue, selectedOperator, storedValue } = this.state;
+
+    // temp variable for updating state storedValue
+    const updateStoredValue = displayValue;
+
+    // parse strings for operations
+    displayValue = parseInt(displayValue, 10);
+    storedValue = parseInt(storedValue, 10);
+
+    // performs selected operator
+    switch(selectedOperator){
+      case '+':
+        displayValue = storedValue + displayValue;
+        break;
+      case '-':
+        displayValue = storedValue - displayValue;
+        break;
+      case 'x':
+        displayValue = storedValue * displayValue;
+        break;
+      case '/':
+        displayValue = storedValue / displayValue;
+        break;
+      default:
+        // set displayValue to 0 if none of the cases
+        displayValue = '0';
+    }
+
+    // converts displayValue to string
+    displayValue = displayValue.toString();
+    // reset the selectedOperator
+    selectedOperator = '';
+    // check for 'NaN' or "Infinity", if true set displayValue to 0
+    if(displayValue === 'NaN' || displayValue === 'Infinity') displayValue = '0';
+
+    this.setState({ displayValue, selectedOperator, storedValue: updateStoredValue })
   };
 
   setOperator = (value) => {
@@ -78,7 +113,6 @@ class Calculator extends Component {
       </div>
     );
   };
-
 }
 
 export default Calculator;
